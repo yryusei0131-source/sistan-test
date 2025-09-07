@@ -1,0 +1,29 @@
+/* 印刷用のスタイル */
+@media print {
+  body {
+    width: 210mm;
+    height: 297mm;
+    margin: 10mm;
+    font-family: "Yu Gothic", sans-serif;
+  }
+
+  h1, label, button, select, input {
+    display: none; /* 印刷時はタイトルやUIを非表示 */
+  }
+
+  #quiz {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* 縦二列 */
+    gap: 8mm;
+  }
+
+  .question {
+    page-break-inside: avoid;
+    font-size: 14pt; /* 基本サイズ */
+  }
+
+  /* 問題数が多い時はフォントを縮小してA4に収める */
+  #quiz.small .question { font-size: 12pt; }
+  #quiz.smaller .question { font-size: 10pt; }
+  #quiz.tiny .question { font-size: 8pt; }
+}
