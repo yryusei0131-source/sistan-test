@@ -18,7 +18,7 @@
     #controls { display: none; }
     #quiz {
       display: grid;
-      grid-template-columns: 1fr 1fr; /* 縦二列 */
+      grid-template-columns: 1fr 1fr;
       grid-gap: 10px 40px;
       padding: 40px;
     }
@@ -26,14 +26,15 @@
       margin-bottom: 15px;
       font-size: var(--dynamic-font-size, 16px);
     }
-    .answer { display: none !important; } /* 印刷では答えを隠す */
+    .answer { display: none !important; }
+    .print-answers .answer { display: inline !important; color: green !important; }
   }
 </style>
 </head>
 <body>
 
 <div id="controls">
-  <h1>単語テスト作成アプリ</h1>
+  <h1>シスタン単語テスト作成アプリ</h1>
 
   <div class="controls">
     <div>
@@ -62,6 +63,7 @@
     <div>
       <button id="toggleBtn">解答を見る/隠す</button>
       <button id="printBtn" style="margin-left:6px;">印刷する</button>
+      <button id="printAnswerBtn" style="margin-left:6px;">解答付き印刷</button>
     </div>
   </div>
 
@@ -306,8 +308,7 @@ const words = [
 { english: "element", japanese: "要素、元素" },
 { english: "climate", japanese: "気候" },
 { english: "revolution", japanese: "革命" },
-{ english: "quarter 4", japanese: "分の" },
-{ english: "1", japanese: "" },
+{ english: "quarter", japanese: "4分の1" },
 { english: "furniture", japanese: "家具" },
 { english: "brain", japanese: "脳" },
 { english: "atmosphere", japanese: "大気、雰囲気" },
@@ -1374,6 +1375,16 @@ document.getElementById("toggleBtn").onclick = () => {
   });
 };
 document.getElementById("printBtn").onclick = () => window.print();
+
+// 解答付き印刷ボタンの追加
+document.getElementById("printAnswerBtn").onclick = () => {
+  const quizDiv = document.getElementById("quiz");
+  quizDiv.classList.add("print-answers");
+  window.print();
+  setTimeout(() => {
+    quizDiv.classList.remove("print-answers");
+  }, 100);
+};
 
 </script>
 
