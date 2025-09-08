@@ -8,9 +8,32 @@
   .controls { display: grid; grid-template-columns: repeat(6, minmax(120px,1fr)); gap: 10px; align-items: end; }
   .controls > div { display:flex; flex-direction:column; }
   input, select, button { padding: 6px; }
-  .question { margin-bottom: 10px; }
+  .question {
+    margin-bottom: 10px;
+    /* ↓追加：問題全体を四角で囲む */
+    border: 2px solid #888;
+    border-radius: 8px;
+    padding: 10px 8px;
+    background: #fafbfc;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    min-height: 40px;
+  }
   .answer { color: green; margin-left: 10px; }
   .meta { margin: 8px 0 16px; color:#555; font-size: 14px; }
+
+  /* 回答欄（箱）スタイル */
+  .blank-box {
+    display: inline-block;
+    border: 1.5px solid #333;
+    border-radius: 4px;
+    width: 140px;
+    height: 28px;
+    vertical-align: middle;
+    margin-left: 12px;
+    background: #fff;
+  }
 
   /* 印刷用スタイル */
   @media print {
@@ -25,9 +48,14 @@
     .question {
       margin-bottom: 15px;
       font-size: var(--dynamic-font-size, 16px);
+      border: 2px solid #000;
+      background: #fff;
+      box-shadow: none;
     }
     .answer { display: none !important; }
+    .blank-box { border: 1.5px solid #000; background: #fff; }
     .print-answers .answer { display: inline !important; color: green !important; }
+    .print-answers .blank-box { display: none !important; }
   }
 </style>
 </head>
@@ -1328,7 +1356,7 @@ function getRangeSlice() {
 /* テスト生成 */
 function generateQuiz() {
   const pool = getRangeSlice();
-  const numQuestions = clamp(parseInt(elNum.value || "1", 10), 1, 9999); // 上限を大きく
+  const numQuestions = clamp(parseInt(elNum.value || "1", 10), 1, 9999);
   const direction = elDir.value;
 
   // poolより多い場合は繰り返し出題
@@ -1336,7 +1364,6 @@ function generateQuiz() {
   if (numQuestions <= pool.length) {
     quizWords = [...pool].sort(() => 0.5 - Math.random()).slice(0, numQuestions);
   } else {
-    // poolをシャッフルして繰り返し追加
     let temp = [];
     while (quizWords.length < numQuestions) {
       if (temp.length === 0) temp = [...pool].sort(() => 0.5 - Math.random());
@@ -1353,11 +1380,14 @@ function generateQuiz() {
 
     const div = document.createElement("div");
     div.className = "question";
-    div.innerHTML = `<strong>${idx+1}.</strong> ${q} <span class="answer" style="display:${showAnswers?'inline':'none'}">→ ${a}</span>`;
+    // 回答欄（箱）を追加
+    div.innerHTML = `<strong>${idx+1}.</strong> ${q}
+      <span class="blank-box"></span>
+      <span class="answer" style="display:${showAnswers?'inline':'none'}">→ ${a}</span>`;
     elQuiz.appendChild(div);
   });
 
-  // 問題数によってフォントサイズを印刷時に最適化
+  // フォントサイズ調整
   let fontSize;
   if (numQuestions <= 10) fontSize = "24px";
   else if (numQuestions <= 20) fontSize = "20px";
